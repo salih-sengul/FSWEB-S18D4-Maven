@@ -16,20 +16,20 @@ public class Burger {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "burger_name")
+    @Column(name = "b_name")
     private String name;
 
-    @Column(name = "burger_price")
+    @Column(name = "b_price")
     private double price;
 
-    @Column(name = "burger_isvegan" )
+    @Column(name = "b_isvegan" )
     private boolean isVegan;
 
-    @Column(name = "burger_breadType")
+    @Column(name = "b_breadType")
     @Enumerated(EnumType.STRING)
     private BreadType breadType;
 
-    @Column(name = "burger_contents")
+    @Column(name = "b_contents")
     private String contents;
 
 }
