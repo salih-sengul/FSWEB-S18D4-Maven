@@ -5,11 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 @Entity
-@Table(name="burger",schema = "fsweb")
+@Table(name = "burger", schema = "fsweb")
 public class Burger {
 
     @Id
@@ -20,9 +20,9 @@ public class Burger {
     private String name;
 
     @Column(name = "b_price")
-    private double price;
+    private Double price;
 
-    @Column(name = "b_isvegan" )
+    @Column(name = "b_isvegan")
     private boolean isVegan;
 
     @Column(name = "b_breadType")
@@ -32,4 +32,11 @@ public class Burger {
     @Column(name = "b_contents")
     private String contents;
 
+    public boolean getIsVegan() {
+        return this.isVegan;
+    }
+
+    public void setIsVegan(boolean isVegan) {
+        this.isVegan = isVegan;
+    }
 }

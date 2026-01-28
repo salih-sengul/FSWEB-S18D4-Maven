@@ -2,15 +2,19 @@ package com.workintech.s18d1.dao;
 
 import com.workintech.s18d1.entity.BreadType;
 import com.workintech.s18d1.entity.Burger;
+import com.workintech.s18d1.exceptions.BurgerException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
+@Slf4j
 public class BurgerDaoImpl implements BurgerDao{
 
    private EntityManager entityManager;
@@ -29,10 +33,14 @@ public class BurgerDaoImpl implements BurgerDao{
     }
 
     @Override
-    public Burger findById(int id) {
+    public Burger findById(long id) {
         Burger burger = entityManager.find(Burger.class,id);
 
-       return burger;
+        if(burger == null){
+            throw new BurgerException("Burger not Found", HttpStatus.NOT_FOUND);
+        }
+
+        return burger;
     }
 
     @Override
@@ -42,7 +50,7 @@ public class BurgerDaoImpl implements BurgerDao{
     }
 
     @Override
-    public List<Burger> findByPrice(double price) {
+    public List<Burger> findByPrice(int price) {
         TypedQuery<Burger> query = entityManager.createQuery(
                 "SELECT b FROM Burger b WHERE b.price > :price ORDER BY b.price DESC"
                 , Burger.class);
@@ -55,7 +63,7 @@ public class BurgerDaoImpl implements BurgerDao{
     @Override
     public List<Burger> findByBreadType(BreadType breadType) {
         TypedQuery<Burger> query = entityManager.createQuery(
-                "SELECT b FROM Burger WHERE breadType = :breadtype ORDER BY b.name ASC"
+                "SELECT b FROM Burger b WHERE b.breadType = :breadtype ORDER BY b.name ASC"
                 , Burger.class);
 
         query.setParameter("breadType",breadType);
@@ -64,8 +72,10 @@ public class BurgerDaoImpl implements BurgerDao{
 
     @Override
     public List<Burger> findByContent(String content) {
-        TypedQuery<Burger> query = entityManager.createQuery("SELECT b FROM Burger b WHERE content LIKE :content", Burger.class);
-        query.setParameter("content", content);
+        TypedQuery<Burger> query = entityManager.createQuery(
+                "SELECT b FROM Burger b WHERE b.contents LIKE CONCAT('%',:content,'%') ORDER BY b.name "
+                , Burger.class);
+        query.setParameter("contents", content);
 
         return query.getResultList();
     }
@@ -81,7 +91,7 @@ public class BurgerDaoImpl implements BurgerDao{
     public Burger remove(long id) {
        Burger burger =  entityManager.find( Burger.class, id);
 
-       if(burger != null) entityManager.remove(burger);
+       entityManager.remove(burger);
 
        return burger;
     }
